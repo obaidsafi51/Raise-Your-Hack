@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, MicOff, Loader2 } from "lucide-react";
 
@@ -14,64 +14,51 @@ export default function VoiceControl({
   disabled = false,
 }: VoiceControlProps) {
   const [isRecording, setIsRecording] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
+  const [isSupported, setIsSupported] = useState(false);
 
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
+  useEffect(() => {
+    // Check if Web Speech API is supported
+    setIsSupported('webkitSpeechRecognition' in window || 'SpeechRecognition' in window);
+  }, []);
 
-      mediaRecorder.ondataavailable = (event) => {
-        audioChunksRef.current.push(event.data);
-      };
-
-      mediaRecorder.onstop = async () => {
-        setIsProcessing(true);
-        const audioBlob = new Blob(audioChunksRef.current, {
-          type: "audio/wav",
-        });
-
-        try {
-          const formData = new FormData();
-          formData.append("audio", audioBlob, "recording.wav");
-
-          const response = await fetch("/api/voice/transcribe", {
-            method: "POST",
-            body: formData,
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            onTranscription(data.transcription);
-          } else {
-            console.error("Transcription failed");
-          }
-        } catch (error) {
-          console.error("Error transcribing audio:", error);
-        } finally {
-          setIsProcessing(false);
-        }
-
-        // Stop all tracks
-        stream.getTracks().forEach((track) => track.stop());
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-    } catch (error) {
-      console.error("Error accessing microphone:", error);
+  const startRecording = () => {
+    if (!isSupported) {
+      alert("Speech recognition is not supported in your browser. Please use Chrome or Edge.");
+      return;
     }
+
+    // Use Web Speech API
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      setIsRecording(true);
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      onTranscription(transcript);
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+      setIsRecording(false);
+    };
+
+    recognition.onend = () => {
+      setIsRecording(false);
+    };
+
+    recognition.start();
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-    }
+    // The Web Speech API will stop automatically when speech ends
+    setIsRecording(false);
   };
 
   const handleClick = () => {
@@ -82,17 +69,32 @@ export default function VoiceControl({
     }
   };
 
+  if (!isSupported) {
+    return (
+      <Button
+        disabled={true}
+        variant="outline"
+        size="icon"
+        className="w-12 h-12 rounded-full opacity-50"
+        title="Speech recognition not supported"
+      >
+        <Mic className="h-5 w-5" />
+      </Button>
+    );
+  }
+
   return (
     <Button
       onClick={handleClick}
-      disabled={disabled || isProcessing}
+      disabled={disabled}
       variant={isRecording ? "destructive" : "outline"}
       size="icon"
-      className="w-12 h-12 rounded-full"
+      className={`w-12 h-12 rounded-full transition-all duration-300 ${
+        isRecording ? 'animate-pulse bg-red-500 hover:bg-red-600' : 'hover:bg-yellow-400/10 hover:border-yellow-400/50'
+      }`}
+      title={isRecording ? "Click to stop recording" : "Click to start voice input"}
     >
-      {isProcessing ? (
-        <Loader2 className="h-5 w-5 animate-spin" />
-      ) : isRecording ? (
+      {isRecording ? (
         <MicOff className="h-5 w-5" />
       ) : (
         <Mic className="h-5 w-5" />

@@ -1,16 +1,767 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { openai } from "@/lib/openai";
-import { prisma } from "@/lib/prisma";
+import { writeFileSync, mkdirSync, existsSync } from "fs";
+import { join } from "path";
+
+// Fast local code generation without external APIs
+function generateReactCode(prompt: string) {
+  const promptLower = prompt.toLowerCase();
+  
+  // Todo App Template
+  if (promptLower.includes('todo') || promptLower.includes('task') || promptLower.includes('list')) {
+    return {
+      description: "A modern Todo app with React hooks",
+      files: {
+        "package.json": JSON.stringify({
+          name: "athena-todo-app",
+          version: "1.0.0",
+          private: true,
+          dependencies: {
+            react: "^18.2.0",
+            "react-dom": "^18.2.0",
+            "react-scripts": "5.0.1"
+          },
+          scripts: {
+            start: "react-scripts start",
+            build: "react-scripts build",
+            test: "react-scripts test",
+            eject: "react-scripts eject"
+          }
+        }, null, 2),
+        "src/App.jsx": `import React, { useState } from 'react';
+import './App.css';
+
+function App() {
+  const [todos, setTodos] = useState([]);
+  const [input, setInput] = useState('');
+
+  const addTodo = () => {
+    if (input.trim()) {
+      setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
+      setInput('');
+    }
+  };
+
+  const toggleTodo = (id) => {
+    setTodos(todos.map(todo => 
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    ));
+  };
+
+  const deleteTodo = (id) => {
+    setTodos(todos.filter(todo => todo.id !== id));
+  };
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>Athena Todo App</h1>
+        <div className="todo-input">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Add a new todo..."
+            onKeyPress={(e) => e.key === 'Enter' && addTodo()}
+          />
+          <button onClick={addTodo}>Add</button>
+        </div>
+        <ul className="todo-list">
+          {todos.map(todo => (
+            <li key={todo.id} className={todo.completed ? 'completed' : ''}>
+              <input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={() => toggleTodo(todo.id)}
+              />
+              <span>{todo.text}</span>
+              <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+            </li>
+          ))}
+        </ul>
+      </header>
+    </div>
+  );
+}
+
+export default App;`,
+        "src/App.css": `body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.App {
+  text-align: center;
+  padding: 20px;
+}
+
+.App-header {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.todo-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.todo-input input {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.todo-input button {
+  padding: 12px 24px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.todo-input button:hover {
+  background: #5a6fd8;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+}
+
+.todo-list li {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.todo-list li.completed {
+  opacity: 0.6;
+  border-left-color: #28a745;
+}
+
+.todo-list li.completed span {
+  text-decoration: line-through;
+}
+
+.todo-list input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+
+.todo-list span {
+  flex: 1;
+  text-align: left;
+  font-size: 16px;
+}
+
+.todo-list button {
+  padding: 8px 16px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.todo-list button:hover {
+  background: #c82333;
+}`,
+        "src/index.jsx": `import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);`,
+        "public/index.html": `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Athena Todo App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>`,
+        "README.md": `# Athena Todo App
+
+A modern React Todo application generated by Athena AI.
+
+## Features
+
+- Add new todos
+- Mark todos as complete/incomplete
+- Delete todos
+- Responsive design
+- Modern UI with gradients
+
+## Getting Started
+
+1. Install dependencies: \`npm install\`
+2. Start the development server: \`npm start\`
+3. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+## Technologies Used
+
+- React 18
+- CSS3 with gradients
+- Modern JavaScript (ES6+)`
+      },
+      dependencies: ["react", "react-dom", "react-scripts"]
+    };
+  }
+  
+  // Calculator App Template
+  if (promptLower.includes('calculator') || promptLower.includes('calc') || promptLower.includes('math')) {
+    return {
+      description: "A modern calculator app with React",
+      files: {
+        "package.json": JSON.stringify({
+          name: "athena-calculator-app",
+          version: "1.0.0",
+          private: true,
+          dependencies: {
+            react: "^18.2.0",
+            "react-dom": "^18.2.0",
+            "react-scripts": "5.0.1"
+          },
+          scripts: {
+            start: "react-scripts start",
+            build: "react-scripts build",
+            test: "react-scripts test",
+            eject: "react-scripts eject"
+          }
+        }, null, 2),
+        "src/App.jsx": `import React, { useState } from 'react';
+import './App.css';
+
+function App() {
+  const [display, setDisplay] = useState('0');
+  const [equation, setEquation] = useState('');
+
+  const handleNumber = (number) => {
+    if (display === '0') {
+      setDisplay(number);
+    } else {
+      setDisplay(display + number);
+    }
+  };
+
+  const handleOperator = (operator) => {
+    setEquation(display + ' ' + operator + ' ');
+    setDisplay('0');
+  };
+
+  const handleEqual = () => {
+    const result = eval(equation + display);
+    setDisplay(result.toString());
+    setEquation('');
+  };
+
+  const handleClear = () => {
+    setDisplay('0');
+    setEquation('');
+  };
+
+  return (
+    <div className="App">
+      <div className="calculator">
+        <div className="display">
+          <div className="equation">{equation}</div>
+          <div className="current">{display}</div>
+        </div>
+        <div className="buttons">
+          <button onClick={handleClear} className="clear">C</button>
+          <button onClick={() => handleOperator('/')} className="operator">÷</button>
+          <button onClick={() => handleNumber('7')}>7</button>
+          <button onClick={() => handleNumber('8')}>8</button>
+          <button onClick={() => handleNumber('9')}>9</button>
+          <button onClick={() => handleOperator('*')} className="operator">×</button>
+          <button onClick={() => handleNumber('4')}>4</button>
+          <button onClick={() => handleNumber('5')}>5</button>
+          <button onClick={() => handleNumber('6')}>6</button>
+          <button onClick={() => handleOperator('-')} className="operator">−</button>
+          <button onClick={() => handleNumber('1')}>1</button>
+          <button onClick={() => handleNumber('2')}>2</button>
+          <button onClick={() => handleNumber('3')}>3</button>
+          <button onClick={() => handleOperator('+')} className="operator">+</button>
+          <button onClick={() => handleNumber('0')} className="zero">0</button>
+          <button onClick={() => handleNumber('.')}>.</button>
+          <button onClick={handleEqual} className="equal">=</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;`,
+        "src/App.css": `body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.App {
+  text-align: center;
+}
+
+.calculator {
+  background: #1a1a1a;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  width: 320px;
+}
+
+.display {
+  background: #2a2a2a;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: right;
+  min-height: 80px;
+}
+
+.equation {
+  color: #888;
+  font-size: 16px;
+  margin-bottom: 10px;
+  min-height: 20px;
+}
+
+.current {
+  color: white;
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.buttons button {
+  padding: 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.buttons button:hover {
+  transform: scale(1.05);
+}
+
+.buttons button:active {
+  transform: scale(0.95);
+}
+
+.buttons button:not(.operator):not(.clear):not(.equal) {
+  background: #333;
+  color: white;
+}
+
+.buttons button:not(.operator):not(.clear):not(.equal):hover {
+  background: #444;
+}
+
+.operator {
+  background: #ff9500 !important;
+  color: white !important;
+}
+
+.operator:hover {
+  background: #ffaa33 !important;
+}
+
+.clear {
+  background: #ff3b30 !important;
+  color: white !important;
+}
+
+.clear:hover {
+  background: #ff5252 !important;
+}
+
+.equal {
+  background: #34c759 !important;
+  color: white !important;
+}
+
+.equal:hover {
+  background: #4cd964 !important;
+}
+
+.zero {
+  grid-column: span 2;
+}`,
+        "src/index.jsx": `import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);`,
+        "public/index.html": `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Athena Calculator</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>`,
+        "README.md": `# Athena Calculator
+
+A modern React Calculator application generated by Athena AI.
+
+## Features
+
+- Basic arithmetic operations
+- Modern iOS-style design
+- Responsive layout
+- Smooth animations
+
+## Getting Started
+
+1. Install dependencies: \`npm install\`
+2. Start the development server: \`npm start\`
+3. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+## Technologies Used
+
+- React 18
+- CSS Grid
+- Modern JavaScript (ES6+)`
+      },
+      dependencies: ["react", "react-dom", "react-scripts"]
+    };
+  }
+  
+  // Default to todo app
+  return {
+    description: "A modern Todo app with React hooks",
+    files: {
+      "package.json": JSON.stringify({
+        name: "athena-todo-app",
+        version: "1.0.0",
+        private: true,
+        dependencies: {
+          react: "^18.2.0",
+          "react-dom": "^18.2.0",
+          "react-scripts": "5.0.1"
+        },
+        scripts: {
+          start: "react-scripts start",
+          build: "react-scripts build",
+          test: "react-scripts test",
+          eject: "react-scripts eject"
+        }
+      }, null, 2),
+      "src/App.jsx": `import React, { useState } from 'react';
+import './App.css';
+
+function App() {
+  const [todos, setTodos] = useState([]);
+  const [input, setInput] = useState('');
+
+  const addTodo = () => {
+    if (input.trim()) {
+      setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
+      setInput('');
+    }
+  };
+
+  const toggleTodo = (id) => {
+    setTodos(todos.map(todo => 
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    ));
+  };
+
+  const deleteTodo = (id) => {
+    setTodos(todos.filter(todo => todo.id !== id));
+  };
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>Athena Todo App</h1>
+        <div className="todo-input">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Add a new todo..."
+            onKeyPress={(e) => e.key === 'Enter' && addTodo()}
+          />
+          <button onClick={addTodo}>Add</button>
+        </div>
+        <ul className="todo-list">
+          {todos.map(todo => (
+            <li key={todo.id} className={todo.completed ? 'completed' : ''}>
+              <input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={() => toggleTodo(todo.id)}
+              />
+              <span>{todo.text}</span>
+              <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+            </li>
+          ))}
+        </ul>
+      </header>
+    </div>
+  );
+}
+
+export default App;`,
+      "src/App.css": `body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.App {
+  text-align: center;
+  padding: 20px;
+}
+
+.App-header {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.todo-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.todo-input input {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.todo-input button {
+  padding: 12px 24px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.todo-input button:hover {
+  background: #5a6fd8;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+}
+
+.todo-list li {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.todo-list li.completed {
+  opacity: 0.6;
+  border-left-color: #28a745;
+}
+
+.todo-list li.completed span {
+  text-decoration: line-through;
+}
+
+.todo-list input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+
+.todo-list span {
+  flex: 1;
+  text-align: left;
+  font-size: 16px;
+}
+
+.todo-list button {
+  padding: 8px 16px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.todo-list button:hover {
+  background: #c82333;
+}`,
+      "src/index.jsx": `import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);`,
+      "public/index.html": `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Athena Todo App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>`,
+      "README.md": `# Athena Todo App
+
+A modern React Todo application generated by Athena AI.
+
+## Features
+
+- Add new todos
+- Mark todos as complete/incomplete
+- Delete todos
+- Responsive design
+- Modern UI with gradients
+
+## Getting Started
+
+1. Install dependencies: \`npm install\`
+2. Start the development server: \`npm start\`
+3. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+## Technologies Used
+
+- React 18
+- CSS3 with gradients
+- Modern JavaScript (ES6+)`
+    },
+    dependencies: ["react", "react-dom", "react-scripts"]
+  };
+}
+
+// Ultra-fast local file generation
+async function generateLocalProject(prompt: string) {
+  const projectName = `athena-app-${Date.now()}`;
+  const projectPath = join(process.cwd(), "generated-projects", projectName);
+  
+  // Create project directory
+  if (!existsSync(join(process.cwd(), "generated-projects"))) {
+    mkdirSync(join(process.cwd(), "generated-projects"));
+  }
+  mkdirSync(projectPath, { recursive: true });
+
+  // Generate code instantly using templates
+  const generatedCode = generateReactCode(prompt);
+
+  // Create project files locally
+  for (const [filename, content] of Object.entries(generatedCode.files)) {
+    const filePath = join(projectPath, filename);
+    const dirPath = join(projectPath, filename.split("/").slice(0, -1).join("/"));
+    
+    if (!existsSync(dirPath)) {
+      mkdirSync(dirPath, { recursive: true });
+    }
+    
+    writeFileSync(filePath, content as string);
+  }
+
+  // Create a simple start script
+  const startScript = `#!/bin/bash
+cd "${projectPath}"
+npm install
+npm start
+`;
+  
+  writeFileSync(join(projectPath, "start.sh"), startScript);
+
+  return {
+    projectName,
+    projectPath,
+    files: Object.keys(generatedCode.files),
+    dependencies: generatedCode.dependencies || [],
+    description: generatedCode.description || "React app generated by Athena AI"
+  };
+}
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const { prompt } = await request.json();
     if (!prompt) {
       return NextResponse.json(
@@ -19,71 +770,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
+    // Generate project locally (INSTANT!)
+    const project = await generateLocalProject(prompt);
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const stream = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a helpful AI programming assistant. Provide clear, concise, and practical code solutions.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      stream: true,
-    });
-
-    const encoder = new TextEncoder();
-    const readable = new ReadableStream({
-      async start(controller) {
-        let responseText = "";
-
-        for await (const chunk of stream) {
-          const content = chunk.choices[0]?.delta?.content || "";
-          responseText += content;
-
-          if (content) {
-            controller.enqueue(
-              encoder.encode(`data: ${JSON.stringify({ content })}\n\n`),
-            );
-          }
-        }
-
-        // Save to database
-        await prisma.promptLog.create({
-          data: {
-            userId: user.id,
-            prompt,
-            response: responseText,
-          },
-        });
-
-        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-        controller.close();
+    const result = {
+      success: true,
+      project: {
+        name: project.projectName,
+        path: project.projectPath,
+        description: project.description
       },
-    });
+      preview: {
+        url: `http://localhost:3000`,
+        instructions: `To preview your app:
+1. Navigate to the project: cd ${project.projectPath}
+2. Install dependencies: npm install
+3. Start the server: npm start
+4. Open http://localhost:3000 in your browser
 
-    return new Response(readable, {
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
+Or run the start script: ./start.sh`
       },
-    });
+      files: project.files,
+      dependencies: project.dependencies,
+      generationTime: "Instant generation - no external APIs!"
+    };
+
+    return NextResponse.json(result);
+
   } catch (error) {
     console.error("Generate API error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { 
+        error: "Internal server error", 
+        details: error instanceof Error ? error.message : "Unknown error"
+      },
       { status: 500 },
     );
   }

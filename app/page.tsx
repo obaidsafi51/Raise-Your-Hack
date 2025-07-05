@@ -236,61 +236,61 @@ export default function HomePage() {
               repeat: Infinity,
               delay: Math.random() * 8,
               ease: "easeInOut",
-            }}
-          />
-        ))}
+              }}
+            />
+          ))}
       </div>
 
       {/* Main Content */}
       <main className="relative z-10">
         {/* Hero Section - Professional Layout */}
-        <section className="min-h-screen flex flex-col justify-center relative pt-20 pb-32">
+        <section className="min-h-screen flex flex-col justify-center relative pt-32 pb-32">
           {/* Title Section - Top Half */}
-          <div className="text-center z-20 relative mb-16">
+          <div className="text-center z-20 relative mb-20">
             <AnimatePresence>
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, ease: "easeOut" }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
               >
                 <motion.h2
-                  className="text-7xl font-bold mb-6 font-serif tracking-tight"
-              style={{
-                background:
-                      "linear-gradient(45deg, #FFD700, #FFA500, #FFD700)",
+                  className="text-8xl font-bold mb-8 font-serif tracking-tight"
+                style={{
+                    background:
+                      "linear-gradient(135deg, #FFD700 0%, #FFA500 25%, #FF8C00 50%, #FFA500 75%, #FFD700 100%)",
                     backgroundSize: "200% 200%",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                    textShadow: "0 0 30px rgba(255, 215, 0, 0.3)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    textShadow: "0 0 40px rgba(255, 215, 0, 0.4)",
                   }}
                   animate={{
                     backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                   }}
                   transition={{
-                    duration: 4,
+                    duration: 6,
                     repeat: Infinity,
                     ease: "easeInOut",
-              }}
-            >
-              ATHENA
+                  }}
+                >
+                  ATHENA
                 </motion.h2>
 
                 <motion.p
-                  className="text-xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed font-light"
+                  className="text-2xl text-gray-300 mb-16 max-w-5xl mx-auto leading-relaxed font-light"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+                  transition={{ duration: 1.2, delay: 0.4, ease: "easeOut" }}
                 >
                   An AI powered companion that creates a website UI in seconds
                 </motion.p>
 
                 {/* Feature Pills - Professional Styling */}
                 <motion.div
-                  className="flex flex-wrap justify-center gap-3 mb-8"
+                  className="flex flex-wrap justify-center gap-4 mb-12"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
-            >
+                  transition={{ duration: 1.2, delay: 0.8, ease: "easeOut" }}
+                >
                   {[
                     "⚡ Lightning Fast",
                     "🧠 AI Powered",
@@ -301,17 +301,18 @@ export default function HomePage() {
                   ].map((feature, index) => (
                     <motion.div
                       key={feature}
-                      className="px-4 py-2 bg-gradient-to-r from-yellow-600/10 to-amber-600/10 border border-yellow-400/20 rounded-lg text-yellow-200 backdrop-blur-sm text-sm font-medium"
+                      className="px-6 py-3 bg-gradient-to-r from-yellow-600/15 to-amber-600/15 border border-yellow-400/25 rounded-xl text-yellow-200 backdrop-blur-sm text-base font-medium shadow-lg hover:shadow-yellow-400/20 transition-all duration-300"
                       whileHover={{
                         scale: 1.05,
-                        backgroundColor: "rgba(255, 215, 0, 0.15)",
-                        borderColor: "rgba(255, 215, 0, 0.4)",
+                        backgroundColor: "rgba(255, 215, 0, 0.2)",
+                        borderColor: "rgba(255, 215, 0, 0.5)",
+                        y: -2,
                       }}
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{
-                        duration: 0.4,
-                        delay: 0.8 + index * 0.1,
+                        duration: 0.5,
+                        delay: 1.2 + index * 0.1,
                         ease: "easeOut",
                       }}
                     >
@@ -321,7 +322,7 @@ export default function HomePage() {
                 </motion.div>
               </motion.div>
             </AnimatePresence>
-          </div>
+                </div>
 
           {/* Large Logo Display */}
           <div className="flex justify-center items-center relative">
@@ -329,14 +330,26 @@ export default function HomePage() {
               className="relative"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.5, delay: 1, ease: "easeOut" }}
+              transition={{ duration: 1.8, delay: 1.5, ease: "easeOut" }}
             >
+              <motion.div
+                className="absolute inset-0 w-64 h-64 bg-gradient-to-r from-yellow-400/20 to-amber-500/20 rounded-full blur-2xl"
+                animate={{
+                  scale: [1, 1.1, 1],
+                  opacity: [0.3, 0.6, 0.3],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
               <Image
                 src="/Athena_logo.png"
                 alt="Athena"
-                width={200}
-                height={200}
-                className="drop-shadow-2xl"
+                width={240}
+                height={240}
+                className="drop-shadow-2xl relative z-10"
               />
             </motion.div>
           </div>
@@ -344,18 +357,18 @@ export default function HomePage() {
 
         {/* Tab Navigation - Professional Styling */}
         <motion.div
-          className="flex justify-center mb-12 relative z-20"
+          className="flex justify-center mb-16 relative z-20"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 1 }}
           viewport={{ once: true }}
         >
-          <div className="bg-gray-900/60 backdrop-blur-xl rounded-xl p-1 flex border border-yellow-400/20 shadow-2xl">
+          <div className="bg-gray-900/70 backdrop-blur-xl rounded-2xl p-2 flex border border-yellow-400/25 shadow-2xl">
             <motion.button
               onClick={() => setActiveTab("generate")}
-              className={`px-8 py-3 rounded-lg font-medium transition-all relative overflow-hidden ${
+              className={`px-10 py-4 rounded-xl font-semibold transition-all relative overflow-hidden ${
                 activeTab === "generate"
-                  ? "bg-yellow-500 text-black shadow-lg"
+                  ? "bg-gradient-to-r from-yellow-500 to-amber-600 text-black shadow-xl"
                   : "text-gray-300 hover:text-white"
               }`}
               whileHover={{ scale: 1.02 }}
@@ -372,9 +385,9 @@ export default function HomePage() {
             </motion.button>
             <motion.button
               onClick={() => setActiveTab("refactor")}
-              className={`px-8 py-3 rounded-lg font-medium transition-all relative overflow-hidden ${
+              className={`px-10 py-4 rounded-xl font-semibold transition-all relative overflow-hidden ${
                 activeTab === "refactor"
-                  ? "bg-yellow-500 text-black shadow-lg"
+                  ? "bg-gradient-to-r from-yellow-500 to-amber-600 text-black shadow-xl"
                   : "text-gray-300 hover:text-white"
               }`}
               whileHover={{ scale: 1.02 }}
@@ -393,34 +406,34 @@ export default function HomePage() {
         </motion.div>
 
         {/* Content Area - Professional Layout */}
-        <div className="max-w-5xl mx-auto px-6 relative z-20 mb-24">
+        <div className="max-w-6xl mx-auto px-8 relative z-20 mb-32">
           <AnimatePresence mode="wait">
             {activeTab === "generate" && (
               <motion.div
                 key="generate"
-                className="space-y-8"
+                className="space-y-10"
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 30 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.6 }}
               >
                 <motion.div
-                  className="text-center mb-10"
+                  className="text-center mb-12"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
                 >
-                  <h3 className="text-3xl font-bold mb-4 text-yellow-400">
+                  <h3 className="text-4xl font-bold mb-6 text-yellow-400">
                     Generate Code with AI
                   </h3>
-                  <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                  <p className="text-gray-400 text-xl max-w-3xl mx-auto leading-relaxed">
                     Describe what you want to build and let Athena create the code for you.
                   </p>
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
                 >
                   <PromptGeneratePanel />
                 </motion.div>
@@ -430,29 +443,29 @@ export default function HomePage() {
             {activeTab === "refactor" && (
               <motion.div
                 key="refactor"
-                className="space-y-8"
+                className="space-y-10"
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 30 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.6 }}
               >
                 <motion.div
-                  className="text-center mb-10"
+                  className="text-center mb-12"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
                 >
-                  <h3 className="text-3xl font-bold mb-4 text-yellow-400">
+                  <h3 className="text-4xl font-bold mb-6 text-yellow-400">
                     Refactor Your Code
                   </h3>
-                  <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                  <p className="text-gray-400 text-xl max-w-3xl mx-auto leading-relaxed">
                     Select code and provide refactoring instructions to improve your existing code.
                   </p>
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
                 >
                   <RefactorWidget />
                 </motion.div>
