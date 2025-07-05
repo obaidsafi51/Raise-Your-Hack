@@ -6,13 +6,6 @@
 */
 
 import React, { useState, useRef } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import VoiceControl from "./VoiceControl";
@@ -89,28 +82,28 @@ export default function PromptGeneratePanel() {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>AI Code Assistant</CardTitle>
-        <CardDescription>
-          Generate code snippets, explanations, and solutions from natural
-          language prompts
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="prompt" className="text-sm font-medium">
+    <div className="bg-gray-900/60 backdrop-blur-xl rounded-xl p-8 border border-yellow-400/20 shadow-2xl">
+      <div className="mb-6">
+        <h3 className="text-2xl font-bold text-yellow-400 mb-2">AI Code Assistant</h3>
+        <p className="text-gray-400">
+          Generate code snippets, explanations, and solutions from natural language prompts
+        </p>
+      </div>
+      
+      <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-3">
+            <label htmlFor="prompt" className="text-sm font-medium text-yellow-200">
               Your Prompt
             </label>
-            <div className="flex space-x-2">
+            <div className="flex space-x-3">
               <Textarea
                 id="prompt"
                 placeholder="Describe what you want to build, debug, or understand..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 rows={4}
-                className="flex-1"
+                className="flex-1 bg-gray-800/50 border-yellow-400/30 text-white placeholder-gray-400 focus:border-yellow-400 focus:ring-yellow-400/20"
               />
               <VoiceControl
                 onTranscription={handleVoiceTranscription}
@@ -122,32 +115,37 @@ export default function PromptGeneratePanel() {
           <Button
             type="submit"
             disabled={isGenerating || !prompt.trim()}
-            className="w-full"
+            className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-black font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-yellow-400/25"
           >
             {isGenerating ? "Generating..." : "Generate Response"}
           </Button>
         </form>
 
         {response && (
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <label htmlFor="response" className="text-sm font-medium">
+              <label htmlFor="response" className="text-sm font-medium text-yellow-200">
                 AI Response
               </label>
-              <Button size="sm" variant="outline" onClick={copyToClipboard}>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={copyToClipboard}
+                className="border-yellow-400/30 text-yellow-200 hover:bg-yellow-400/10 hover:border-yellow-400"
+              >
                 Copy
               </Button>
             </div>
             <div
               id="response"
               ref={responseRef}
-              className="bg-gray-50 p-4 rounded-md font-mono text-sm whitespace-pre-wrap max-h-96 overflow-y-auto"
+              className="bg-gray-800/50 border border-yellow-400/20 p-4 rounded-lg font-mono text-sm text-gray-200 whitespace-pre-wrap max-h-96 overflow-y-auto"
             >
               {response}
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
