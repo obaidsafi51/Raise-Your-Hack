@@ -24,4 +24,4 @@ export const useAppStore = create<AppState>((set) => ({
   setUser: (user) => set({ user }),
   setAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
   setLoading: (isLoading) => set({ isLoading }),
-})); 
+}));

@@ -14,22 +14,25 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData();
     const audioFile = formData.get("audio") as File;
-    
+
     if (!audioFile) {
-      return NextResponse.json({ error: "Audio file is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Audio file is required" },
+        { status: 400 },
+      );
     }
 
     // Upload to S3
     const buffer = Buffer.from(await audioFile.arrayBuffer());
     const fileName = `voice/${Date.now()}-${audioFile.name}`;
-    
+
     await s3Client.send(
       new PutObjectCommand({
         Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: fileName,
         Body: buffer,
         ContentType: audioFile.type,
-      })
+      }),
     );
 
     // Transcribe with Whisper
@@ -39,15 +42,15 @@ export async function POST(request: NextRequest) {
       response_format: "text",
     });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       transcription: transcription,
-      audioUrl: `https://${process.env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${fileName}`
+      audioUrl: `https://${process.env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${fileName}`,
     });
   } catch (error) {
     console.error("Transcribe API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
-} 
+}

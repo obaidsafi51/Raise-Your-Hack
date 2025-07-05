@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -52,7 +58,7 @@ export default function SettingsPage() {
         },
         body: JSON.stringify(settings),
       });
-      
+
       if (response.ok) {
         alert("Settings saved successfully!");
       } else {
@@ -78,37 +84,45 @@ export default function SettingsPage() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Settings</h1>
-      
+
       <div className="grid gap-6 max-w-2xl">
         <Card>
           <CardHeader>
             <CardTitle>API Tokens</CardTitle>
-            <CardDescription>Configure your API keys for external services</CardDescription>
+            <CardDescription>
+              Configure your API keys for external services
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">
+              <label htmlFor="github-token" className="block text-sm font-medium mb-2">
                 GitHub Personal Access Token
               </label>
               <Textarea
+                id="github-token"
                 placeholder="ghp_..."
                 value={settings.githubToken || ""}
-                onChange={(e) => setSettings({ ...settings, githubToken: e.target.value })}
+                onChange={(e) =>
+                  setSettings({ ...settings, githubToken: e.target.value })
+                }
                 rows={2}
               />
               <p className="text-xs text-muted-foreground mt-1">
                 Required for PR reviews and GitHub integration
               </p>
             </div>
-            
+
             <div>
-              <label className="block text-sm font-medium mb-2">
+              <label htmlFor="openai-key" className="block text-sm font-medium mb-2">
                 OpenAI API Key
               </label>
               <Textarea
+                id="openai-key"
                 placeholder="sk-..."
                 value={settings.openaiApiKey || ""}
-                onChange={(e) => setSettings({ ...settings, openaiApiKey: e.target.value })}
+                onChange={(e) =>
+                  setSettings({ ...settings, openaiApiKey: e.target.value })
+                }
                 rows={2}
               />
               <p className="text-xs text-muted-foreground mt-1">
@@ -121,50 +135,76 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Feature Toggles</CardTitle>
-            <CardDescription>Enable or disable specific features</CardDescription>
+            <CardDescription>
+              Enable or disable specific features
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-sm font-medium">Voice Control</label>
+                <label htmlFor="voice-control" className="text-sm font-medium">
+                  Voice Control
+                </label>
                 <p className="text-xs text-muted-foreground">
                   Enable voice-to-text for prompts
                 </p>
               </div>
               <input
+                id="voice-control"
                 type="checkbox"
                 checked={settings.enableVoiceControl}
-                onChange={(e) => setSettings({ ...settings, enableVoiceControl: e.target.checked })}
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    enableVoiceControl: e.target.checked,
+                  })
+                }
                 className="rounded"
               />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-sm font-medium">PR Reviews</label>
+                <label htmlFor="pr-reviews" className="text-sm font-medium">
+                  PR Reviews
+                </label>
                 <p className="text-xs text-muted-foreground">
                   Enable GitHub PR review features
                 </p>
               </div>
               <input
+                id="pr-reviews"
                 type="checkbox"
                 checked={settings.enablePRReviews}
-                onChange={(e) => setSettings({ ...settings, enablePRReviews: e.target.checked })}
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    enablePRReviews: e.target.checked,
+                  })
+                }
                 className="rounded"
               />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-sm font-medium">Analytics</label>
+                <label htmlFor="analytics" className="text-sm font-medium">
+                  Analytics
+                </label>
                 <p className="text-xs text-muted-foreground">
                   Track usage analytics and metrics
                 </p>
               </div>
               <input
+                id="analytics"
                 type="checkbox"
                 checked={settings.enableAnalytics}
-                onChange={(e) => setSettings({ ...settings, enableAnalytics: e.target.checked })}
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    enableAnalytics: e.target.checked,
+                  })
+                }
                 className="rounded"
               />
             </div>
@@ -178,10 +218,15 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent>
             <div>
-              <label className="block text-sm font-medium mb-2">Theme</label>
+              <label htmlFor="theme" className="block text-sm font-medium mb-2">
+                Theme
+              </label>
               <select
+                id="theme"
                 value={settings.theme}
-                onChange={(e) => setSettings({ ...settings, theme: e.target.value as any })}
+                onChange={(e) =>
+                  setSettings({ ...settings, theme: e.target.value as "light" | "dark" | "system" })
+                }
                 className="w-full p-2 border rounded-md"
               >
                 <option value="light">Light</option>
@@ -200,4 +245,4 @@ export default function SettingsPage() {
       </div>
     </div>
   );
-} 
+}

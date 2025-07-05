@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     if (!prNumber || !repo) {
       return NextResponse.json(
         { error: "PR number and repository are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -25,7 +25,8 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: "You are a senior software engineer reviewing pull requests. Provide a concise summary and risk assessment.",
+          content:
+            "You are a senior software engineer reviewing pull requests. Provide a concise summary and risk assessment.",
         },
         {
           role: "user",
@@ -37,12 +38,13 @@ export async function POST(request: NextRequest) {
 
     const response = completion.choices[0]?.message?.content;
     let result;
-    
+
     try {
       result = JSON.parse(response || "{}");
     } catch {
       result = {
-        summary: "This PR introduces new features and bug fixes. The changes appear well-structured and follow good practices.",
+        summary:
+          "This PR introduces new features and bug fixes. The changes appear well-structured and follow good practices.",
         riskLevel: "low",
       };
     }
@@ -52,7 +54,7 @@ export async function POST(request: NextRequest) {
     console.error("Review summary API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
-} 
+}

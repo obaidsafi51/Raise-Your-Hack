@@ -13,7 +13,10 @@ export async function POST(request: NextRequest) {
 
     const { prompt } = await request.json();
     if (!prompt) {
-      return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Prompt is required" },
+        { status: 400 },
+      );
     }
 
     const user = await prisma.user.findUnique({
@@ -29,7 +32,8 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: "You are a helpful AI programming assistant. Provide clear, concise, and practical code solutions.",
+          content:
+            "You are a helpful AI programming assistant. Provide clear, concise, and practical code solutions.",
         },
         {
           role: "user",
@@ -43,13 +47,15 @@ export async function POST(request: NextRequest) {
     const readable = new ReadableStream({
       async start(controller) {
         let responseText = "";
-        
+
         for await (const chunk of stream) {
           const content = chunk.choices[0]?.delta?.content || "";
           responseText += content;
-          
+
           if (content) {
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ content })}\n\n`),
+            );
           }
         }
 
@@ -71,14 +77,14 @@ export async function POST(request: NextRequest) {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
         "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
+        Connection: "keep-alive",
       },
     });
   } catch (error) {
     console.error("Generate API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
-} 
+}

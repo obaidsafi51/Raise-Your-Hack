@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -10,7 +16,10 @@ interface RefactorWidgetProps {
   onRefactoredCode?: (code: string, explanation: string) => void;
 }
 
-export default function RefactorWidget({ initialCode = "", onRefactoredCode }: RefactorWidgetProps) {
+export default function RefactorWidget({
+  initialCode = "",
+  onRefactoredCode,
+}: RefactorWidgetProps) {
   const [code, setCode] = useState(initialCode);
   const [instructions, setInstructions] = useState("");
   const [refactoredCode, setRefactoredCode] = useState("");
@@ -40,7 +49,7 @@ export default function RefactorWidget({ initialCode = "", onRefactoredCode }: R
         const data = await response.json();
         setRefactoredCode(data.refactoredCode || "");
         setExplanation(data.explanation || "");
-        
+
         if (onRefactoredCode) {
           onRefactoredCode(data.refactoredCode, data.explanation);
         }
@@ -68,8 +77,11 @@ export default function RefactorWidget({ initialCode = "", onRefactoredCode }: R
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-2">Code to Refactor</label>
+          <label htmlFor="code" className="block text-sm font-medium mb-2">
+            Code to Refactor
+          </label>
           <Textarea
+            id="code"
             placeholder="Paste your code here..."
             value={code}
             onChange={(e) => setCode(e.target.value)}
@@ -79,8 +91,14 @@ export default function RefactorWidget({ initialCode = "", onRefactoredCode }: R
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Refactoring Instructions</label>
+          <label
+            htmlFor="instructions"
+            className="block text-sm font-medium mb-2"
+          >
+            Refactoring Instructions
+          </label>
           <Textarea
+            id="instructions"
             placeholder="e.g., Improve readability, optimize performance, follow best practices..."
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
@@ -99,9 +117,15 @@ export default function RefactorWidget({ initialCode = "", onRefactoredCode }: R
         {refactoredCode && (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Refactored Code</label>
+              <label
+                htmlFor="refactored-code"
+                className="block text-sm font-medium mb-2"
+              >
+                Refactored Code
+              </label>
               <div className="relative">
                 <Textarea
+                  id="refactored-code"
                   value={refactoredCode}
                   readOnly
                   rows={8}
@@ -120,7 +144,12 @@ export default function RefactorWidget({ initialCode = "", onRefactoredCode }: R
 
             {explanation && (
               <div>
-                <label className="block text-sm font-medium mb-2">Explanation</label>
+                <label
+                  htmlFor="explanation"
+                  className="block text-sm font-medium mb-2"
+                >
+                  Explanation
+                </label>
                 <div className="p-3 bg-blue-50 rounded-md text-sm">
                   {explanation}
                 </div>
@@ -131,4 +160,4 @@ export default function RefactorWidget({ initialCode = "", onRefactoredCode }: R
       </CardContent>
     </Card>
   );
-} 
+}

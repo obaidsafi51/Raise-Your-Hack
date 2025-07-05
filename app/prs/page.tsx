@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import PRReviewCard from "@/components/PRReviewCard";
 
@@ -59,23 +64,23 @@ export default function PRsPage() {
         <h1 className="text-3xl font-bold">PR Dashboard</h1>
         <Button onClick={fetchPRs}>Refresh</Button>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {prs.map((pr) => (
           <PRReviewCard key={pr.id} pr={pr} />
         ))}
       </div>
-      
+
       {prs.length === 0 && (
         <Card>
           <CardHeader>
             <CardTitle>No PRs Found</CardTitle>
             <CardDescription>
-              You don't have any pull requests to review at the moment.
+              You don&apos;t have any pull requests to review at the moment.
             </CardDescription>
           </CardHeader>
         </Card>
       )}
     </div>
   );
-} 
+}

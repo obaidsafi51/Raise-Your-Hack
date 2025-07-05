@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     // Calculate analytics
     const totalPrompts = user.promptLogs.length;
     const totalPRReviews = user.prReviews.length;
-    
+
     // Calculate average response time (mock data for now)
     const averageResponseTime = 1500; // ms
 
@@ -57,8 +57,12 @@ export async function GET(request: NextRequest) {
         timestamp: review.createdAt.toISOString(),
         description: `Reviewed PR #${review.prNumber} in ${review.repo}`,
       })),
-    ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-     .slice(0, 10);
+    ]
+      .sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      )
+      .slice(0, 10);
 
     return NextResponse.json({
       totalPrompts,
@@ -71,7 +75,7 @@ export async function GET(request: NextRequest) {
     console.error("Analytics API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
-} 
+}

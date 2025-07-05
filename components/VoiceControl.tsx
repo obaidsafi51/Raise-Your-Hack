@@ -9,7 +9,10 @@ interface VoiceControlProps {
   disabled?: boolean;
 }
 
-export default function VoiceControl({ onTranscription, disabled = false }: VoiceControlProps) {
+export default function VoiceControl({
+  onTranscription,
+  disabled = false,
+}: VoiceControlProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -28,8 +31,10 @@ export default function VoiceControl({ onTranscription, disabled = false }: Voic
 
       mediaRecorder.onstop = async () => {
         setIsProcessing(true);
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
-        
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/wav",
+        });
+
         try {
           const formData = new FormData();
           formData.append("audio", audioBlob, "recording.wav");
@@ -52,7 +57,7 @@ export default function VoiceControl({ onTranscription, disabled = false }: Voic
         }
 
         // Stop all tracks
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       };
 
       mediaRecorder.start();
@@ -94,4 +99,4 @@ export default function VoiceControl({ onTranscription, disabled = false }: Voic
       )}
     </Button>
   );
-} 
+}

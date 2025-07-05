@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 interface PR {
@@ -80,15 +86,19 @@ export default function PRReviewCard({ pr }: PRReviewCardProps) {
             </CardDescription>
           </div>
           <div className="flex items-center space-x-2">
-            <span className={`px-2 py-1 text-xs rounded-full ${
-              pr.state === "open" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-            }`}>
+            <span
+              className={`px-2 py-1 text-xs rounded-full ${
+                pr.state === "open"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-gray-100 text-gray-800"
+              }`}
+            >
               {pr.state}
             </span>
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         <div className="flex items-center space-x-2 text-sm text-muted-foreground">
           <img
@@ -110,7 +120,9 @@ export default function PRReviewCard({ pr }: PRReviewCardProps) {
             {riskLevel && (
               <div className="text-sm">
                 <strong>Risk Level:</strong>
-                <span className={`ml-2 px-2 py-1 rounded text-xs ${getRiskColor(riskLevel)}`}>
+                <span
+                  className={`ml-2 px-2 py-1 rounded text-xs ${getRiskColor(riskLevel)}`}
+                >
                   {riskLevel}
                 </span>
               </div>
@@ -138,4 +150,4 @@ export default function PRReviewCard({ pr }: PRReviewCardProps) {
       </CardContent>
     </Card>
   );
-} 
+}

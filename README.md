@@ -5,6 +5,7 @@ A comprehensive AI-powered developer assistant built with Next.js 14, TypeScript
 ## 🚀 Features
 
 ### Core Functionality
+
 - **AI Code Generation**: Generate code snippets from natural language prompts with streaming responses
 - **Code Refactoring**: Refactor existing code with AI-suggested improvements and explanations
 - **GitHub PR Reviews**: Automatically review pull requests and generate summaries with risk assessments
@@ -13,6 +14,7 @@ A comprehensive AI-powered developer assistant built with Next.js 14, TypeScript
 - **User Settings**: Configure API tokens and feature preferences
 
 ### Technical Stack
+
 - **Frontend**: Next.js 14+ with App Router, TypeScript, TailwindCSS
 - **UI Components**: ShadCN UI with Radix UI primitives
 - **Backend**: Next.js API Routes
@@ -36,54 +38,60 @@ Before running this application, make sure you have:
 ## 🛠️ Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd raise-your-hack
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp env.example .env.local
    ```
-   
+
    Fill in your environment variables:
+
    ```env
    # Database
    DATABASE_URL="postgresql://username:password@localhost:5432/raise-your-hack"
-   
+
    # NextAuth.js
    NEXTAUTH_URL="http://localhost:3000"
    NEXTAUTH_SECRET="your-nextauth-secret-key-here"
-   
+
    # GitHub OAuth
    GITHUB_ID="your-github-client-id"
    GITHUB_SECRET="your-github-client-secret"
-   
+
    # OpenAI
    OPENAI_API_KEY="your-openai-api-key"
-   
+
    # AWS S3
    AWS_ACCESS_KEY_ID="your-aws-access-key"
    AWS_SECRET_ACCESS_KEY="your-aws-secret-key"
    AWS_REGION="us-east-1"
    AWS_S3_BUCKET_NAME="your-s3-bucket-name"
-   
+
    # GitHub API (for PR reviews)
    GITHUB_TOKEN="your-github-personal-access-token"
    ```
 
 4. **Set up the database**
+
    ```bash
    npx prisma generate
    npx prisma db push
    ```
 
 5. **Run the development server**
+
    ```bash
    npm run dev
    ```
@@ -150,12 +158,14 @@ raise-your-hack/
 ## 🚀 Deployment
 
 ### Vercel (Recommended)
+
 1. Push your code to GitHub
 2. Connect your repository to Vercel
 3. Add environment variables in Vercel dashboard
 4. Deploy automatically on push
 
 ### Railway
+
 1. Connect your GitHub repository to Railway
 2. Add environment variables
 3. Deploy automatically
@@ -171,24 +181,28 @@ The application uses NextAuth.js with GitHub OAuth for authentication. Users can
 ## 🤖 AI Features
 
 ### Code Generation
+
 - Natural language to code conversion
 - Streaming responses for real-time feedback
 - Support for multiple programming languages
 - Context-aware suggestions
 
 ### Code Refactoring
+
 - AI-powered code improvement suggestions
 - Detailed explanations of changes
 - Best practices recommendations
 - Performance optimization tips
 
 ### PR Reviews
+
 - Automatic pull request analysis
 - Risk assessment and summaries
 - Inline comment suggestions
 - Code quality evaluation
 
 ### Voice Control
+
 - Voice-to-text transcription using Whisper
 - Hands-free interaction
 - Audio file storage in S3
@@ -197,6 +211,7 @@ The application uses NextAuth.js with GitHub OAuth for authentication. Users can
 ## 📊 Analytics
 
 Track your usage with built-in analytics:
+
 - Total prompts and interactions
 - Feature usage statistics
 - Response time metrics
@@ -213,16 +228,21 @@ Track your usage with built-in analytics:
 ## 🔧 Configuration
 
 ### Environment Variables
+
 All configuration is done through environment variables. See `env.example` for the complete list.
 
 ### Database Schema
+
 The application uses three main models:
+
 - **User**: Authentication and profile data
 - **PromptLog**: AI interaction history
 - **PRReview**: GitHub PR review data
 
 ### API Routes
+
 All API routes are protected and require authentication. They include:
+
 - `/api/generate` - AI code generation
 - `/api/refactor` - Code refactoring
 - `/api/voice/transcribe` - Voice transcription
@@ -263,4 +283,4 @@ If you encounter any issues or have questions:
 
 ---
 
-Built with ❤️ by the Raise Your Hack team 
+Built with ❤️ by the Raise Your Hack team

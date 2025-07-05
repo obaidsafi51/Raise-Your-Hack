@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     if (!code || !instructions) {
       return NextResponse.json(
         { error: "Code and instructions are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -23,7 +23,8 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: "You are a code refactoring expert. Provide refactored code with clear explanations of changes. Return the response in JSON format with 'refactoredCode' and 'explanation' fields.",
+          content:
+            "You are a code refactoring expert. Provide refactored code with clear explanations of changes. Return the response in JSON format with 'refactoredCode' and 'explanation' fields.",
         },
         {
           role: "user",
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     const response = completion.choices[0]?.message?.content;
     let result;
-    
+
     try {
       result = JSON.parse(response || "{}");
     } catch {
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
     console.error("Refactor API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
-} 
+}

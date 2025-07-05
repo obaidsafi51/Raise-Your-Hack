@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import StatCard from "@/components/StatCard";
 
 interface Analytics {
@@ -63,7 +69,7 @@ export default function AnalyticsPage() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Analytics Dashboard</h1>
-      
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
         <StatCard
           title="Total Prompts"
@@ -91,14 +97,18 @@ export default function AnalyticsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Most Used Features</CardTitle>
-            <CardDescription>Your most frequently used AI features</CardDescription>
+            <CardDescription>
+              Your most frequently used AI features
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {analytics.mostUsedFeatures.map((feature, index) => (
                 <div key={index} className="flex justify-between items-center">
                   <span className="font-medium">{feature.feature}</span>
-                  <span className="text-sm text-muted-foreground">{feature.count} uses</span>
+                  <span className="text-sm text-muted-foreground">
+                    {feature.count} uses
+                  </span>
                 </div>
               ))}
             </div>
@@ -116,7 +126,9 @@ export default function AnalyticsPage() {
                 <div key={activity.id} className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">{activity.description}</p>
+                    <p className="text-sm font-medium">
+                      {activity.description}
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {new Date(activity.timestamp).toLocaleDateString()}
                     </p>
@@ -129,4 +141,4 @@ export default function AnalyticsPage() {
       </div>
     </div>
   );
-} 
+}
