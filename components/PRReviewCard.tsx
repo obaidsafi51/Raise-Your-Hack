@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -101,10 +102,12 @@ export default function PRReviewCard({ pr }: PRReviewCardProps) {
 
       <CardContent className="space-y-4">
         <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <img
+          <Image
             src={pr.user.avatar_url}
             alt={pr.user.login}
-            className="w-5 h-5 rounded-full"
+            width={20}
+            height={20}
+            className="rounded-full"
           />
           <span>{pr.user.login}</span>
           <span>•</span>
@@ -121,7 +124,9 @@ export default function PRReviewCard({ pr }: PRReviewCardProps) {
               <div className="text-sm">
                 <strong>Risk Level:</strong>
                 <span
-                  className={`ml-2 px-2 py-1 rounded text-xs ${getRiskColor(riskLevel)}`}
+                  className={`ml-2 px-2 py-1 rounded text-xs ${getRiskColor(
+                    riskLevel,
+                  )}`}
                 >
                   {riskLevel}
                 </span>

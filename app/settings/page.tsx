@@ -95,7 +95,10 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label htmlFor="github-token" className="block text-sm font-medium mb-2">
+              <label
+                htmlFor="github-token"
+                className="block text-sm font-medium mb-2"
+              >
                 GitHub Personal Access Token
               </label>
               <Textarea
@@ -113,7 +116,10 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label htmlFor="openai-key" className="block text-sm font-medium mb-2">
+              <label
+                htmlFor="openai-key"
+                className="block text-sm font-medium mb-2"
+              >
                 OpenAI API Key
               </label>
               <Textarea
@@ -225,7 +231,10 @@ export default function SettingsPage() {
                 id="theme"
                 value={settings.theme}
                 onChange={(e) =>
-                  setSettings({ ...settings, theme: e.target.value as "light" | "dark" | "system" })
+                  setSettings({
+                    ...settings,
+                    theme: e.target.value as "light" | "dark" | "system",
+                  })
                 }
                 className="w-full p-2 border rounded-md"
               >
